@@ -106,6 +106,14 @@ Adicionei a dependência do Spring Security na Aplicação, o commit seria:
 
 ---
 
+**FIX** - usado quando você ajusta algum bug no código, por exemplo:
+
+Fiz uma mudança em um código que deveria retornar paginado de 5 em 5 e retornava de 10 em 10, o commit seria:
+
+**Fix: ajustado para paginação 5 em 5**
+
+---
+
 Caso tenha se interessado no assunto e queira ver mais anotações e padrões que o mercado de trabalho segue, fica o link para leitura: <a href="https://medium.com/linkapi-solutions/conventional-commits-pattern-3778d1a1e657">Conventional Commits</a>
 
-Caso tenham alguma dúvida podem entrar em contato comigo que eu ajudo com todo prazer, quaisquer mudanças que verem e quiserem adicionar a esse documento estão livres para faze-lá, agradeço a compreensão de todos.
+Caso tenham alguma dúvida, fiquem a vontade para entrar em contato comigo que eu ajudo com todo prazer, quaisquer mudanças que verem e quiserem adicionar a esse documento estão livres para faze-lá, agradeço a compreensão de todos.
