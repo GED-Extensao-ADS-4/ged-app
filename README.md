@@ -147,6 +147,14 @@ Okay, com suas mudanças dentro dessa **"caixinha"**, agora fulaninho está livr
 
 Fulaninho agora com toda sua carga de experiência provida pelos erros que ele cometeu em sua vida, cria uma **nova branch** específica para sua tarefa **(spoiler da 2° solução)**, ele acessa essa branch e finalmente pode **"liberar"** essas mudanças nessa nova branch, dessa forma, dentro da **branch** que ele criou, ele executa o seguinte comando <b>``git stash apply``</b>, que **"abre"** aquela caixinha e coloca todas as modificações dele nessa nova branch.
 
+O flow ficaria dessa forma: 
+```mermaid
+graph TD
+A[git stash] -- Guarda na Caixinha --> B[git checkout]
+B -- Cria e Acessa a Branch --> C[git stash apply]
+C -- Abre a Caixinha --> D[Fim do Flow]
+```
+
 Cansativo ? Muito!!! Olha o tanto de volta que o fulaninho teve que dar pra resolver um conflito, o certo seria evitar eles né ? E a gente pode, com a 2° solução a gente evita muitas dessas dores de cabeça.
 
 > **Atenção:** Ensinei o flow do **git stash** por que acontece de as vezes acabarmos fazendo mudanças direto na branch **main** e ta tudo bem caso aconteça, mas o certo seria evitar isso, okay ?.
@@ -170,6 +178,15 @@ Terminando de fazer as alterações, o fulaninho vai querer commitar essas mudan
 Ao ver esse erro, fulaninho, um cara muito informado, executa o seguinte comando <b>``git push --set-upstream-to origin crud-usuarios``</b>. Mas por que fazer isso ?
 
 Ao executar o comando <b>``git checkout -b crud-usuarios``</b>, fulaninho criou uma branch **local**, isso quer dizer que essa branch **crud-usuarios** existe apenas na máquina dele, por isso ao executar o **git push** o erro citado acima ocorre, por isso executamos o <b>``git push --set-upstream-to origin crud-usuarios``</b> que força a criação dessa branch no repositório **remoto**
+
+O flow ficaria dessa forma: 
+```mermaid
+graph TD
+A[git checkout] -- Cria e Acessa a nova Branch --> B[git push]
+B -- Tenta mandar alterações --> C[Erro Upstream Branch]
+-- Branch existe apenas Local--> D[--set-upstream-to]
+-- Força criação Remota --> F[Fim do flow]
+```
 
 >**Atenção**: o <b>``git push --set-upstream-to origin "nome-da-branch"``</b> precisa ser executado apenas uma vez por branch.
 
