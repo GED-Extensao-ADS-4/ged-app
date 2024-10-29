@@ -72,4 +72,40 @@ Vou deixar por enquanto apenas essas duas anotações para o pessoal pegar o jei
 
 ---
 
+# Commit Standards (Padrões de Commit)
 
+Como nosso foco nesse projeto vai ser a documentação para deixar esse lindo legado para as próximas turmas de ADS modificarem o mesmo, o mais correto a se fazer é seguirmos alguns padrões pelo menos de documentação para que eles possam se encontrar com mais facilidade no futuro, por isso pensei em seguirmos alguns padrões de commits para esse projeto
+
+### O que é ?
+
+Padrões de commit é uma prática onde vamos identificar o tipo do commit anotando o início dele com alguns nomes **PADRÕES**, os nomes que mais vamos usar acredito que possa vir ser:
+
+---
+
+**FEAT** - usado quando você cria alguma nova funcionalidade, por exemplo:
+
+Criei um novo método de encriptar a senha na classe service, o commit seria:
+
+**Feat: método que criptografa a senha do usuário**
+
+---
+
+**REFACT** - usado quando você apenas refatora algum bloco de código, sem alterar a funcionalidade do código em sí, por exemplo:
+
+Mudei o código de salvar usuário e apenas mudei a mensagem da exception, deixando ela mais clara, o commit seria:
+
+**Refact: mensagem da exception melhorada para maior clareza**
+
+---
+
+**BUILD** - usado quando você muda alguma configuração que afete o start/runtime da aplicação, por exemplo:
+
+Adicionei a dependência do Spring Security na Aplicação, o commit seria:
+
+**Build: dependência do Spring Security adicionado**
+
+---
+
+Caso tenha se interessado no assunto e queira ver mais anotações e padrões que o mercado de trabalho segue, fica o link para leitura: <a href="https://medium.com/linkapi-solutions/conventional-commits-pattern-3778d1a1e657">Conventional Commits</a>
+
+Caso tenham alguma dúvida podem entrar em contato comigo que eu ajudo com todo prazer, quaisquer mudanças que verem e quiserem adicionar a esse documento estão livres para faze-lá, agradeço a compreensão de todos.
