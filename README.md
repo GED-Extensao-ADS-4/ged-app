@@ -201,3 +201,73 @@ B -- Tenta mandar alterações --> C[Erro Upstream Branch]
 
 Seguindo as experiências que o fulaninho compartilhou com a gente, vamos evitar **MUITA** dor de cabeça com o versionamento desse projeto, por mais que não vamos fazer nada de muito grandioso *(até por que não vai dar tempo)*, ainda assim vão ser várias pessoas acessando o mesmo repositório ao mesmo tempo.
 > **Atenção:** Se ainda estiver com dúvidas sobre este fluxo, pode entrar em contato comigo ou com alguém que ja tenha feito e entendido para te ajudar, melhor previnir que remediar!!
+
+# Diagrama ER
+Abaixo vou apresentar quais as tabelas vamos usar, tanto as já criadas quanto as que podem aparecer com o progresso do projeto estão sujeitas a mudanças, sempre atente-se a sua tarefa para verificar se a mesma não altera alguma estrutura da tabela, caso altere, favor atualizar a documentação ou entrar em contato com seu GP para que ele altere a doc.
+
+``` mermaid
+erDiagram
+	Usuario ||--o{ Roles : Uma_ou_Muitas
+    Usuario {
+	    int id
+      string login
+      string email
+      string senha
+      date created_at
+      boolean is_ativo
+    }
+    Roles {
+	    int id
+	    string nome
+	    Usuario id
+    }
+    Aluno {
+	    int id
+      string nome
+      string sobrenome
+      date dataNascimento
+      string cpf
+      string rg
+      date created_at
+      boolean is_ativo
+    }
+
+   Documento {
+	    int id
+	    string nome
+	    string tipo_documento
+	    string tipo_arquivo
+	    string path
+	    date upload_date
+	    date download_date
+	    string downloaded_by
+	    string uploaded_by
+	    Aluno id
+   }
+```
+
+### Usuario e Roles
+
+Meta Dados básicos, podem vir a aparecer mais ou deixar de ter alguns dependendo das demandas que vão aparecendo
+
+Um usuário pode ter uma ou muitas **roles(papéis)**, por exemplo: **user, admin, superAdmin, etc**
+
+<b>``is_ativo:``</b> Campo booleano para sinalizar se um usuario está ativo para usar o sistema.
+
+### Alunos
+
+Meta Dados básicos, podem vir a aparecer mais ou deixar de ter alguns dependendo das demandas que vão aparecendo
+
+<b>``is_ativo:``</b> Campo booleano para sinalizar se um aluno está ativo para ser listado no sistema.
+
+### Documento
+
+<b>``tipo_documento:``</b> Um enumerador para sinalizar que tipo de documento é, por exemplo: **Prontuário, Certidões, Comprovantes, etc**.
+
+<b>``tipo_arquivo:``</b> Um enumerador para sinalizar o tipo do arquivo, por exemplo: **PDF, JPG, XLSX, etc**.
+
+<b>``path:``</b> Caminho ou URL do arquivo, para que ele possa ser baixado ou renderizado no front-end.
+
+<b>``download_date:``</b> Para podermos filtrar pelos últimos documentos acessados.
+
+<b>``downloaded_by e uploaded_by:``</b> Para sinalizar quem subiu e quem baixou o arquivo.
