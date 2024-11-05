@@ -230,6 +230,7 @@ erDiagram
       string rg
       date created_at
       boolean is_ativo
+      Usuario created_by
     }
 
    Documento {
