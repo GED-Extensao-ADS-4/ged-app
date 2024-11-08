@@ -1,6 +1,6 @@
 package br.apae.ged.dto;
 
-import br.apae.ged.models.Document;
+import br.apae.ged.entitys.Document;
 import org.springframework.web.multipart.MultipartFile;
 
 public record DocumentRequestDTO(
