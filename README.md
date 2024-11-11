@@ -272,3 +272,37 @@ Meta Dados básicos, podem vir a aparecer mais ou deixar de ter alguns dependend
 <b>``download_date:``</b> Para podermos filtrar pelos últimos documentos acessados.
 
 <b>``downloaded_by e uploaded_by:``</b> Para sinalizar quem subiu e quem baixou o arquivo.
+
+---
+
+# Pull Requests - Como contribuir
+Segue explicativo de como usar o template para contribuir usando os PRs:
+
+[_Use como referência a documentação do Conventional Commits_](https://github.com/iuricode/padroes-de-commits)
+
+1. Preencher informações relevantes como: 
+
+    _Seções não usadas devem ser apagadas_
+    - Descrição | **Evidenciar o que foi feito**
+
+    - Problema Relacionado(Se houver)
+
+    - Checklist - **Use enquanto estiver criando o PR**
+
+    - Capturas de tela(Se houver)
+
+    - Notas adicionais | **Use para destacar informações úteis para quem for revisar**
+        
+        Exemplo: Tarefa relacionada: [#1](link)
+
+2. Informar revisor(es)
+
+3. Atribuir usuários
+
+4. Adicionar tag/label - **Indica o contexto do PR, como "bug"**
+
+6. Revisar
+
+7. Criar
+
+8. Informar e solicitar aprovação
