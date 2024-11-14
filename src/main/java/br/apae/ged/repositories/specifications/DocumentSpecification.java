@@ -17,4 +17,25 @@ public class DocumentSpecification {
             return criteriaBuilder.like(root.get("nome"), "%" + nome + "%");
         };
     }
+
+
+    public static Specification<Document> downloadedBy(String downloaded) {
+        return (root, query, criteriaBuilder) -> {
+            if (downloaded == null || downloaded.isEmpty() || downloaded.isBlank()) {
+                return criteriaBuilder.conjunction();
+            }
+            return criteriaBuilder.like(root.get("downloadedBy"), "%" + downloaded + "%");
+        };
+    }
+
+
+    public static Specification<Document> uploadedBy(String uploaded) {
+        return (root, query, criteriaBuilder) -> {
+            if (uploaded == null || uploaded.isEmpty() || uploaded.isBlank()) {
+                return criteriaBuilder.conjunction();
+            }
+            return criteriaBuilder.like(root.get("uploadedBy"), "%" + uploaded + "%");
+        };
+    }
+
 }
