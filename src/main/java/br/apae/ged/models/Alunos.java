@@ -28,7 +28,7 @@ public class Alunos {
     private String rg;
 
     @Column(nullable = false)
-    private boolean status;
+    private Boolean isAtivo;
 
     @Column(nullable = false)
     private String endereco;
