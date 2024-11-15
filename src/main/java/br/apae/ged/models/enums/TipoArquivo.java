@@ -1,4 +1,4 @@
-package br.apae.ged.entitys.enums;
+package br.apae.ged.models.enums;
 
 public enum TipoArquivo {
 

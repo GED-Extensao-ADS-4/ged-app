@@ -1,4 +1,4 @@
-package br.apae.ged.entitys;
+package br.apae.ged.models;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

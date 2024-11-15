@@ -1,6 +1,6 @@
 package br.apae.ged.dto;
 
-import br.apae.ged.entitys.Document;
+import br.apae.ged.models.Document;
 import java.time.LocalDateTime;
 
 public record DocumentByIdDTO(
