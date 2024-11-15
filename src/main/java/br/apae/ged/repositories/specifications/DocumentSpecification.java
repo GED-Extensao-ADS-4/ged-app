@@ -1,6 +1,6 @@
 package br.apae.ged.repositories.specifications;
 
-import br.apae.ged.entitys.Document;
+import br.apae.ged.models.Document;
 import org.springframework.data.jpa.domain.Specification;
 
 public class DocumentSpecification {
