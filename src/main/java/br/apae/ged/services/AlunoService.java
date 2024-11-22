@@ -3,7 +3,9 @@ package br.apae.ged.services;
 import br.apae.ged.exceptions.AlunoNaoEncontradoException;
 import br.apae.ged.models.Alunos;
 import br.apae.ged.repositories.AlunoRepository;
+import br.apae.ged.repositories.specifications.AlunoSpecification;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,8 +30,15 @@ public class AlunoService {
         return alunoRepository.save(aluno);
     }
 
-    public List<Alunos> listarAlunos() {
-        return alunoRepository.findAll();
+    public List<Alunos> listarAlunos(String nome, String cpf, String rg, String responsavel) {
+
+        var spec = Specification.where(AlunoSpecification.isAtivo())
+                .and(AlunoSpecification.byResponsavelLegal(responsavel))
+                .and(AlunoSpecification.byRg(rg))
+                .and(AlunoSpecification.byCpf(cpf))
+                .and(AlunoSpecification.byNome(nome));
+
+        return alunoRepository.findAll(spec);
     }
 
     public Alunos buscarAlunoPorId(Long id) {

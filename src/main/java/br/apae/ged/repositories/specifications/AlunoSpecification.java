@@ -31,5 +31,21 @@ public class AlunoSpecification {
         };
     }
 
+    public static Specification<Alunos> byRg(String rg) {
+        return (root, query, criteriaBuilder) -> {
+            if (rg == null || rg.isBlank() || rg.isEmpty()) {
+                return criteriaBuilder.conjunction();
+            }
+            return criteriaBuilder.like(root.get("cpf"), "%" + rg + "%");
+        };
+    }
 
+    public static Specification<Alunos> byResponsavelLegal(String responsavel) {
+        return (root, query, criteriaBuilder) -> {
+            if (responsavel == null || responsavel.isBlank() || responsavel.isEmpty()) {
+                return criteriaBuilder.conjunction();
+            }
+            return criteriaBuilder.like(root.get("cpfResponsavel"), "%" + responsavel + "%");
+        };
+    }
 }
