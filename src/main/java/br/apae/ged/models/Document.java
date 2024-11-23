@@ -1,7 +1,10 @@
 package br.apae.ged.models;
 
+import br.apae.ged.models.enums.TipoArquivo;
+import br.apae.ged.models.enums.TipoDocumento;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,14 +14,15 @@ import java.time.LocalDateTime;
 @Setter
 @AllArgsConstructor
 @Entity(name = "tb_documentos")
+@Builder
 public class Document {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String nome;
-    private String tipoDocumento;
-    private String tipoArquivo;
+    private TipoDocumento tipoDocumento;
+    private TipoArquivo tipoArquivo;
     private String path;
     private LocalDateTime dataUpload;
     private LocalDateTime dataDownload;
