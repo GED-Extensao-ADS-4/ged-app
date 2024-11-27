@@ -1,2 +1,4 @@
-package br.apae.ged.dto;public class AlunoDto {
+package br.apae.ged.dto;
+
+public class AlunoDto {
 }
