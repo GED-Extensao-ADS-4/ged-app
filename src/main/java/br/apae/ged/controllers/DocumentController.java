@@ -24,7 +24,7 @@ public class DocumentController {
 
     @PostMapping(value = "/create",consumes = "multipart/form-data")
     public ResponseEntity<DocumentResponseStatusDTO>post(@ModelAttribute DocumentRequestDTO document) throws IOException {
-        return ResponseEntity.status(201).body(service.documentResponseDTO(document));
+        return ResponseEntity.status(201).body(service.save(document));
     }
 
     @GetMapping("/{id}")
