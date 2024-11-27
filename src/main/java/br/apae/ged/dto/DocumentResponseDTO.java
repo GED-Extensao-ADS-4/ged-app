@@ -1,15 +1,16 @@
 package br.apae.ged.dto;
 
 import br.apae.ged.models.Document;
+import br.apae.ged.models.enums.TipoArquivo;
+import br.apae.ged.models.enums.TipoDocumento;
 
 import java.time.LocalDateTime;
 
-public record DocumentByIdDTO(
-
+public record DocumentResponseDTO(
         Long id,
         String nome,
-        String tipoDocumento,
-        String tipoArquivo,
+        TipoDocumento tipoDocumento,
+        TipoArquivo tipoArquivo,
         String path,
         LocalDateTime dataUpload,
         LocalDateTime dataDownload,
@@ -18,10 +19,10 @@ public record DocumentByIdDTO(
         Boolean isLast
 ) {
 
-    public static DocumentByIdDTO fromEntity(Document document){
-        return new DocumentByIdDTO(
+    public static DocumentResponseDTO fromEntity(Document document){
+        return new DocumentResponseDTO(
                 document.getId(),
-                document.getNome(),
+                removeUUID(document.getNome()),
                 document.getTipoDocumento(),
                 document.getTipoArquivo(),
                 document.getPath(),
@@ -31,5 +32,10 @@ public record DocumentByIdDTO(
                 document.getUploadedBy(),
                 document.getIsLast()
         );
+    }
+
+    private static String removeUUID(String nome){
+        int index = nome.indexOf("-");
+        return nome.substring(0,index);
     }
 }
