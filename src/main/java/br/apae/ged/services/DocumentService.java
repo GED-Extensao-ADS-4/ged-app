@@ -69,7 +69,8 @@ public class DocumentService {
     public List<DocumentResponseDTO> byID(Long id) {
         List<DocumentResponseDTO> resp = new ArrayList<>();
 
-        getDocumentsRescursively(documentRepository.findById(id).orElseThrow(() -> new NotFoundException("Documento não encontrado")), resp);
+        getDocumentsRescursively(documentRepository.findById(id).orElseThrow(()
+                -> new NotFoundException("Documento não encontrado")), resp);
 
         return resp;
     }
@@ -95,8 +96,7 @@ public class DocumentService {
     }
 
     private void getDocumentsRescursively(Document document, List<DocumentResponseDTO> resp){
-        if(resp.size() == 5)
-            return;
+        if(resp.size() == 5) return;
 
         resp.add(DocumentResponseDTO.fromEntity(document));
         if (document.getPrevVersion() == null) return;

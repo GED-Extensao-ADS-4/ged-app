@@ -1,6 +1,8 @@
 package br.apae.ged.dto;
 
 import br.apae.ged.models.Document;
+import br.apae.ged.models.enums.TipoArquivo;
+import br.apae.ged.models.enums.TipoDocumento;
 
 import java.time.LocalDateTime;
 
@@ -8,8 +10,8 @@ public record DocumentByIdDTO(
 
         Long id,
         String nome,
-        String tipoDocumento,
-        String tipoArquivo,
+        TipoDocumento tipoDocumento,
+        TipoArquivo tipoArquivo,
         String path,
         LocalDateTime dataUpload,
         LocalDateTime dataDownload,

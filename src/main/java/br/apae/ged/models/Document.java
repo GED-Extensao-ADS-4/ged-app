@@ -21,7 +21,9 @@ public class Document {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String nome;
+    @Enumerated(EnumType.STRING)
     private TipoDocumento tipoDocumento;
+    @Enumerated(EnumType.STRING)
     private TipoArquivo tipoArquivo;
     private String path;
     private LocalDateTime dataUpload;
