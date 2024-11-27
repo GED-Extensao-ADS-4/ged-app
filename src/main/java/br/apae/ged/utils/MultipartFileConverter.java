@@ -13,6 +13,12 @@ public class MultipartFileConverter {
     }
 
     public static File convertToFile(MultipartFile multipartFile, String name) throws IOException {
+
+        File directory = new File("imgs");
+        if (!directory.exists()) {
+            directory.mkdirs();
+        }
+
         File convFile = new File("imgs", name);
         FileOutputStream fos = new FileOutputStream(convFile);
         fos.write(multipartFile.getBytes());

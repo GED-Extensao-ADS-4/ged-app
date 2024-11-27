@@ -22,7 +22,7 @@ public record DocumentResponseDTO(
     public static DocumentResponseDTO fromEntity(Document document){
         return new DocumentResponseDTO(
                 document.getId(),
-                removeUUID(document.getNome()),
+                document.getNome(),
                 document.getTipoDocumento(),
                 document.getTipoArquivo(),
                 document.getPath(),
@@ -36,6 +36,7 @@ public record DocumentResponseDTO(
 
     private static String removeUUID(String nome){
         int index = nome.indexOf("-");
-        return nome.substring(0,index);
+
+        return nome.substring(0, index);
     }
 }

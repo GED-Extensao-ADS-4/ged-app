@@ -29,7 +29,7 @@ public class DocumentService {
 
     private final DocumentRepository documentRepository;
 
-    public DocumentResponseStatusDTO documentResponseDTO(DocumentRequestDTO request) throws IOException {
+    public DocumentResponseStatusDTO save(DocumentRequestDTO request) throws IOException {
 
         if (request.prevVersion() != null) {
             var last = documentRepository.findById(request.prevVersion().getId()).orElseThrow(() -> new RuntimeException("Documento não existe."));
@@ -37,7 +37,7 @@ public class DocumentService {
             documentRepository.save(last);
         }
         String path = MultipartFileConverter.convertToFile(request.file(),
-                request.nome().concat("-" + UUID.randomUUID()).concat(request.tipoArquivo().toString())).getPath();
+                request.nome().concat("-" + UUID.randomUUID()).concat(".").concat(request.tipoArquivo().toString().toLowerCase().trim())).getPath();
 
         Document document = Document.builder()
                 .nome(request.nome())
@@ -46,6 +46,7 @@ public class DocumentService {
                 .path(path)
                 .dataUpload(LocalDateTime.now())
                 .uploadedBy("upado")
+                .isLast(true)
                 .prevVersion(request.prevVersion() == null ? null : documentRepository.findById(request.prevVersion().getId()).orElseThrow(() -> new RuntimeException("Documento não existe.")))
                 .build();
         documentRepository.save(document);
@@ -68,36 +69,33 @@ public class DocumentService {
 
     public List<DocumentResponseDTO> byID(Long id) {
         List<DocumentResponseDTO> resp = new ArrayList<>();
-
-        getDocumentsRescursively(documentRepository.findById(id).orElseThrow(() -> new NotFoundException("Documento não encontrado")), resp);
+        getDocumentsRescursively(documentRepository.findById(id).orElseThrow(()
+                -> new NotFoundException("documento não encontrado")), resp);
 
         return resp;
     }
 
     public Resource downloadFile(Long id) throws MalformedURLException {
-        Document document = documentRepository.findById(id).orElseThrow(() -> new NotFoundException("Documento não existe."));
+        Document doc = documentRepository.findById(id).orElseThrow(() -> new NotFoundException("Documento não existe"));
 
-        Path filePath = Paths.get(document.getPath()).normalize();
+        Path filePath = Paths.get(doc.getPath()).normalize();
 
         Resource resource = new UrlResource(filePath.toUri());
 
-        if (!resource.exists() || ! resource.isReadable()){
-            throw new NotFoundException("Não foi possivel baixar o arquivo.");
+        if (!resource.exists() || !resource.isReadable()){
+            throw new NotFoundException("Não foi possível baixar o arquivo");
         }
 
-        document.setDataDownload(LocalDateTime.now());
+        doc.setDataDownload(LocalDateTime.now());
+        doc.setDownloadedBy("baixado");
 
-        document.setDownloadedBy("Baixado");
-
-        documentRepository.save(document);
+        documentRepository.save(doc);
 
         return resource;
     }
 
     private void getDocumentsRescursively(Document document, List<DocumentResponseDTO> resp){
-        if(resp.size() == 5)
-            return;
-
+        if(resp.size() == 5) return;
         resp.add(DocumentResponseDTO.fromEntity(document));
         if (document.getPrevVersion() == null) return;
         var prev = document.getPrevVersion();
