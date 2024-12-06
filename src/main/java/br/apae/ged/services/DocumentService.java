@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -54,10 +55,12 @@ public class DocumentService {
         return new DocumentResponseStatusDTO(201, "Documento upado com sucesso.");
     }
 
-    public List<DocumentResponseDTO> list(String nome, String downloadBy, String uploadedBy) {
+    public List<DocumentResponseDTO> list(String nome, String downloadBy, String uploadedBy, LocalDate start, LocalDate end) {
         var spec = Specification
                 .where(DocumentSpecification.hasNome(nome))
                 .and(DocumentSpecification.downloadedBy(downloadBy))
+                .and((DocumentSpecification.dateBetwem(start, end)))
+                .and(DocumentSpecification.orderByDateDesc())
                 .and(DocumentSpecification.uploadedBy(uploadedBy));
 
 

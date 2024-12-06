@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -35,9 +36,11 @@ public class DocumentController {
     @GetMapping("/list/{alunoID}")
     public ResponseEntity<List<DocumentResponseDTO>> list(@PathVariable("alunoID") Long id,
                                                           @RequestParam(required = false) String nome,
+                                                          @RequestParam(required = false) LocalDate start,
+                                                          @RequestParam(required = false) LocalDate end,
                                                           @RequestParam(required = false) String downloadBy,
                                                           @RequestParam(required = false) String uploadedBy){
-        return ResponseEntity.ok(service.list(nome, downloadBy, uploadedBy));
+        return ResponseEntity.ok(service.list(nome, downloadBy, uploadedBy, start, end));
     }
 
     @GetMapping("/download/{id}")
