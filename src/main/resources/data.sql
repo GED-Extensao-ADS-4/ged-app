@@ -1,0 +1,5 @@
+INSERT INTO tb_roles (id, nome) VALUES (1, 'ROLE_USER')
+ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO tb_roles (id, nome) VALUES (2, 'ROLE_ADMIN')
+ON CONFLICT (id) DO NOTHING;
