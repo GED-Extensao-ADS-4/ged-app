@@ -1,12 +1,16 @@
 package br.apae.ged.services;
 
-import br.apae.ged.dto.DocumentRequestDTO;
-import br.apae.ged.dto.DocumentResponseDTO;
-import br.apae.ged.dto.DocumentResponseStatusDTO;
+import br.apae.ged.dto.document.DocumentRequestDTO;
+import br.apae.ged.dto.document.DocumentResponseDTO;
+import br.apae.ged.dto.document.DocumentUploadResponseDTO;
 import br.apae.ged.exceptions.NotFoundException;
+import br.apae.ged.exceptions.ValidationException;
+import br.apae.ged.models.Alunos;
 import br.apae.ged.models.Document;
+import br.apae.ged.repositories.AlunoRepository;
 import br.apae.ged.repositories.DocumentRepository;
 import br.apae.ged.repositories.specifications.DocumentSpecification;
+import br.apae.ged.utils.AuthenticationUtil;
 import br.apae.ged.utils.MultipartFileConverter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
@@ -21,6 +25,7 @@ import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @Service
@@ -28,38 +33,55 @@ import java.util.UUID;
 public class DocumentService {
 
     private final DocumentRepository documentRepository;
+    private final AlunoRepository alunoRepository;
 
-    public DocumentResponseStatusDTO save(DocumentRequestDTO request) throws IOException {
+    public DocumentUploadResponseDTO save(DocumentRequestDTO document, Long alunoID) throws IOException {
 
-        if (request.prevVersion() != null) {
-            var last = documentRepository.findById(request.prevVersion().getId()).orElseThrow(() -> new RuntimeException("Documento não existe."));
-            last.setIsLast(false);
-            documentRepository.save(last);
+        if (document.prevVersion() != null) {
+
+            if (!Objects.equals(document.prevVersion().getAluno().getId(), alunoID)){
+                throw new ValidationException("O aluno vinculado a este novo documento não é o mesmo da versão anterior");
+            }
+
+            var last = documentRepository.findById(document.prevVersion().getId());
+            if (last.isPresent()) {
+                var updated = last.get();
+                updated.setIsLast(false);
+                documentRepository.save(updated);
+            }
         }
-        String path = MultipartFileConverter.convertToFile(request.file(),
-                request.nome().concat("-" + UUID.randomUUID()).concat(".").concat(request.tipoArquivo().toString().toLowerCase().trim())).getPath();
 
-        Document document = Document.builder()
-                .nome(request.nome())
-                .tipoDocumento(request.tipoDocumento())
-                .tipoArquivo(request.tipoArquivo())
+        Alunos aluno = alunoRepository.findById(alunoID).orElseThrow(() -> new NotFoundException("Aluno não encontrado"));
+
+        String path = MultipartFileConverter.convertToFile(document.file(),
+                document.nome().concat("-" + UUID.randomUUID()).concat(".").concat(document.tipoArquivo().toString())).getPath();
+
+        Document doc = Document.builder()
+                .titulo(document.nome())
+                .tipoDocumento(document.tipoDocumento())
+                .tipoArquivo(document.tipoArquivo())
+                .uploadedBy(AuthenticationUtil.retriveAuthenticatedUser())
                 .path(path)
-                .dataUpload(LocalDateTime.now())
-                .uploadedBy("upado")
                 .isLast(true)
-                .prevVersion(request.prevVersion() == null ? null : documentRepository.findById(request.prevVersion().getId()).orElseThrow(() -> new RuntimeException("Documento não existe.")))
+                .aluno(aluno)
+                .dataUpload(LocalDateTime.now())
+                .prevVersion(document.prevVersion() == null ? null : documentRepository.findById(document.prevVersion().getId())
+                        .orElseThrow(() -> new NotFoundException("Documento atribuído como versão anterior não existe")))
                 .build();
-        documentRepository.save(document);
 
-        return new DocumentResponseStatusDTO(201, "Documento upado com sucesso.");
+        documentRepository.save(doc);
+
+        return new DocumentUploadResponseDTO(201, "Upload de documento efetuado com sucesso!");
     }
 
-    public List<DocumentResponseDTO> list(String nome, String downloadBy, String uploadedBy) {
-        var spec = Specification
-                .where(DocumentSpecification.hasNome(nome))
-                .and(DocumentSpecification.downloadedBy(downloadBy))
-                .and(DocumentSpecification.uploadedBy(uploadedBy));
+    public List<DocumentResponseDTO> list(Long alunoID, String titulo, String alunoNome) {
 
+        var spec = Specification
+                .where(DocumentSpecification.isLast())
+                .and(DocumentSpecification.dateDesc())
+                .and(DocumentSpecification.byAlunoId(alunoID)
+                        .and(DocumentSpecification.byTitulo(titulo))
+                        .and(DocumentSpecification.byAlunoNome(alunoNome)));
 
         return documentRepository.findAll(spec)
                 .stream()
@@ -69,13 +91,15 @@ public class DocumentService {
 
     public List<DocumentResponseDTO> byID(Long id) {
         List<DocumentResponseDTO> resp = new ArrayList<>();
-        getDocumentsRescursively(documentRepository.findById(id).orElseThrow(()
+        getDocumentsRecursively(documentRepository.findById(id).orElseThrow(()
                 -> new NotFoundException("documento não encontrado")), resp);
 
         return resp;
     }
 
+
     public Resource downloadFile(Long id) throws MalformedURLException {
+
         Document doc = documentRepository.findById(id).orElseThrow(() -> new NotFoundException("Documento não existe"));
 
         Path filePath = Paths.get(doc.getPath()).normalize();
@@ -87,23 +111,18 @@ public class DocumentService {
         }
 
         doc.setDataDownload(LocalDateTime.now());
-        doc.setDownloadedBy("baixado");
+        doc.setDownloadedBy(AuthenticationUtil.retriveAuthenticatedUser());
 
         documentRepository.save(doc);
 
         return resource;
     }
 
-    private void getDocumentsRescursively(Document document, List<DocumentResponseDTO> resp){
-        if(resp.size() == 5) return;
+    private void getDocumentsRecursively(Document document, List<DocumentResponseDTO> resp){
+        if (resp.size() == 5) return;
         resp.add(DocumentResponseDTO.fromEntity(document));
         if (document.getPrevVersion() == null) return;
         var prev = document.getPrevVersion();
-        getDocumentsRescursively(prev,resp);
+        getDocumentsRecursively(prev, resp);
     }
 }
-
-
-
-
-

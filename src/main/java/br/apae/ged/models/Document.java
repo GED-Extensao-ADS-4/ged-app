@@ -13,26 +13,45 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @AllArgsConstructor
-@Entity(name = "tb_documentos")
 @Builder
+@Entity(name = "tb_documentos")
+@Table(indexes = {
+        @Index(name = "titulo_idx", columnList = "titulo"),
+        @Index(name = "aluno_idx", columnList = "aluno_id")
+})
 public class Document {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    private String nome;
-    @Enumerated(EnumType.STRING)
-    private TipoDocumento tipoDocumento;
-    @Enumerated(EnumType.STRING)
-    private TipoArquivo tipoArquivo;
+    private String titulo;
     private String path;
     private LocalDateTime dataUpload;
     private LocalDateTime dataDownload;
-    private String downloadedBy;
-    private String uploadedBy;
+    private LocalDateTime dataUpdate;
+
+    @Enumerated(EnumType.STRING)
+    private TipoDocumento tipoDocumento;
+
+    @Enumerated(EnumType.STRING)
+    private TipoArquivo tipoArquivo;
+
+    @ManyToOne
+    @JoinColumn(name = "aluno_id", referencedColumnName = "id")
+    private Alunos aluno;
+
+    @ManyToOne
+    @JoinColumn(name = "downloaded_by", referencedColumnName = "id")
+    private User downloadedBy;
+
+    @ManyToOne
+    @JoinColumn(name = "uploaded_by", referencedColumnName = "id")
+    private User uploadedBy;
+
     @OneToOne
-    @JoinColumn(name = "link_id", referencedColumnName = "id")
+    @JoinColumn(name = "previous_version", referencedColumnName = "id")
     private Document prevVersion;
+
     private Boolean isLast;
 
     public Document(){

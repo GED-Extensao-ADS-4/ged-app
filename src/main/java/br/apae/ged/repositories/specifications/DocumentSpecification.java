@@ -9,33 +9,44 @@ public class DocumentSpecification {
         throw new IllegalStateException("Utility Class");
     }
 
-    public static Specification<Document> hasNome(String nome) {
+    public static Specification<Document> isLast(){
+        return (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("isLast"), true);
+    }
+
+    public static Specification<Document> dateDesc(){
         return (root, query, criteriaBuilder) -> {
-            if (nome == null || nome.isEmpty() || nome.isBlank()) {
+            if (query == null){
                 return criteriaBuilder.conjunction();
             }
-            return criteriaBuilder.like(root.get("nome"), "%" + nome + "%");
+            query.orderBy(criteriaBuilder.desc(root.get("dataDownload")));
+            return query.getRestriction();
         };
     }
 
-
-    public static Specification<Document> downloadedBy(String downloaded) {
+    public static Specification<Document> byTitulo(String titulo){
         return (root, query, criteriaBuilder) -> {
-            if (downloaded == null || downloaded.isEmpty() || downloaded.isBlank()) {
+            if (titulo == null || titulo.isBlank() || titulo.isEmpty()){
                 return criteriaBuilder.conjunction();
             }
-            return criteriaBuilder.like(root.get("downloadedBy"), "%" + downloaded + "%");
+            return criteriaBuilder.like(root.get("titulo"), "%" + titulo + "%");
         };
     }
 
-
-    public static Specification<Document> uploadedBy(String uploaded) {
+    public static Specification<Document> byAlunoId(Long id) {
         return (root, query, criteriaBuilder) -> {
-            if (uploaded == null || uploaded.isEmpty() || uploaded.isBlank()) {
+            if (id == null) {
                 return criteriaBuilder.conjunction();
             }
-            return criteriaBuilder.like(root.get("uploadedBy"), "%" + uploaded + "%");
+            return criteriaBuilder.equal(root.get("aluno").get("id"), id);
         };
     }
 
+    public static Specification<Document> byAlunoNome(String nome) {
+        return (root, query, criteriaBuilder) -> {
+            if (nome == null || nome.isBlank() || nome.isEmpty()) {
+                return criteriaBuilder.conjunction();
+            }
+            return criteriaBuilder.like(root.get("aluno").get("nome"),"%" + nome + "%");
+        };
+    }
 }
