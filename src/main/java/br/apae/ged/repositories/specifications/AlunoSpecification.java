@@ -18,34 +18,25 @@ public class AlunoSpecification {
             if (nome == null || nome.isBlank() || nome.isEmpty()){
                 return criteriaBuilder.conjunction();
             }
-            return criteriaBuilder.like(root.get("nome"), "%" + nome + "%");
+            return criteriaBuilder.like(root.get("nome"),"%" + nome + "%");
         };
     }
 
     public static Specification<Alunos> byCpf(String cpf) {
         return (root, query, criteriaBuilder) -> {
-            if (cpf == null || cpf.isBlank() || cpf.isEmpty()) {
+            if (cpf == null) {
                 return criteriaBuilder.conjunction();
             }
-            return criteriaBuilder.like(root.get("cpf"), "%" + cpf + "%");
+            return criteriaBuilder.equal(root.get("cpf"), cpf);
         };
     }
 
-    public static Specification<Alunos> byRg(String rg) {
+    public static Specification<Alunos> byCpfResponsavel(String cpf) {
         return (root, query, criteriaBuilder) -> {
-            if (rg == null || rg.isBlank() || rg.isEmpty()) {
+            if (cpf == null) {
                 return criteriaBuilder.conjunction();
             }
-            return criteriaBuilder.like(root.get("cpf"), "%" + rg + "%");
-        };
-    }
-
-    public static Specification<Alunos> byResponsavelLegal(String responsavel) {
-        return (root, query, criteriaBuilder) -> {
-            if (responsavel == null || responsavel.isBlank() || responsavel.isEmpty()) {
-                return criteriaBuilder.conjunction();
-            }
-            return criteriaBuilder.like(root.get("cpfResponsavel"), "%" + responsavel + "%");
+            return criteriaBuilder.equal(root.get("cpfResponsavel"), cpf);
         };
     }
 }

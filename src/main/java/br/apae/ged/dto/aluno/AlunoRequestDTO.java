@@ -1,17 +1,20 @@
-package br.apae.ged.dto;
+package br.apae.ged.dto.aluno;
+
+import br.apae.ged.models.Alunos;
+import br.apae.ged.models.Endereco;
 
 import java.time.LocalDate;
 
-public class AlunoRequestDTO(
+public record AlunoRequestDTO(
         String nome,
-        String sobrenome,
         LocalDate dataNascimento,
         String sexo,
-        String cep,
+        String cpf,
         String telefone,
         String cpfResponsavel,
         String deficiencia,
         LocalDate dataEntrada,
+        Boolean isAtivo,
         String observacoes,
         String estado,
         String cidade,
@@ -20,25 +23,23 @@ public class AlunoRequestDTO(
         int numero,
         String complemento,
         String cep
-
 ) {
-    public  class  Aluno alunoFromEntity(AlunoRequestDTO request)
 
-    {
-        return new Aluno(
+    public static Alunos alunoFromEntity(AlunoRequestDTO request){
+        return new Alunos(
                 request.nome(),
-                request.sobrenome(),
                 request.dataNascimento(),
                 request.sexo(),
-                request.cpf,
+                request.cpf(),
                 request.telefone(),
-                request.cpfResponsavel,
-                request.deficiencia,
+                request.cpfResponsavel(),
+                request.deficiencia(),
                 LocalDate.now(),
-                request.observacoes();
-                );
+                request.observacoes()
+        );
+    }
 
-    public static  Endereco enderecoFromEntity(AlunoRequestDTO requestDTO){
+    public static Endereco enderecoFromEntity(AlunoRequestDTO requestDTO){
         return new Endereco(
                 requestDTO.estado(),
                 requestDTO.cidade(),
@@ -47,8 +48,6 @@ public class AlunoRequestDTO(
                 requestDTO.numero(),
                 requestDTO.complemento(),
                 requestDTO.cep()
-        )
-    }
-
+        );
     }
 }

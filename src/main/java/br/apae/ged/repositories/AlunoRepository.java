@@ -7,6 +7,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface AlunoRepository extends JpaRepository <Alunos, Long>, JpaSpecificationExecutor<Alunos> {
-    Alunos findByCpf(String cpf);
-    Alunos findByRg(String rg);
+
+    boolean existsByCpf(String cpf);
 }

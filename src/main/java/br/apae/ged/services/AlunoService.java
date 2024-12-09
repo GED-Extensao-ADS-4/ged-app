@@ -1,77 +1,105 @@
 package br.apae.ged.services;
 
-import br.apae.ged.dto.AlunoDto;
-import br.apae.ged.exceptions.AlunoNaoEncontradoException;
+import br.apae.ged.dto.aluno.AlunoRequestDTO;
+import br.apae.ged.exceptions.NotFoundException;
 import br.apae.ged.models.Alunos;
+import br.apae.ged.models.Endereco;
 import br.apae.ged.repositories.AlunoRepository;
+import br.apae.ged.repositories.EnderecoRepository;
 import br.apae.ged.repositories.specifications.AlunoSpecification;
-import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
+import br.apae.ged.strategy.NewAlunoValidationStrategy;
+import br.apae.ged.utils.AuthenticationUtil;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 @Service
+@RequiredArgsConstructor
 public class AlunoService {
 
-    @Autowired
-    private ModelMapper modelMapper;
+    private final AlunoRepository alunoRepository;
+    private final EnderecoRepository enderecoRepository;
+    private final List<NewAlunoValidationStrategy> alunoValidationStrategies;
 
-    @Autowired
-    private AlunoRepository alunoRepository;
+    public Alunos create(AlunoRequestDTO request){
 
-    public AlunoDto salvar(AlunoDto alunoDto) {
-        validarCpfEouRgDuplicado(alunoDto.getCpf(), alunoDto.getRg());
+        alunoValidationStrategies.forEach(validation -> validation.validate(request));
 
-        Alunos aluno = modelMapper.map(alunoDto, Alunos.class);
-        aluno = alunoRepository.save(aluno);
+        Alunos aluno = AlunoRequestDTO.alunoFromEntity(request);
+        aluno.setCreatedBy(AuthenticationUtil.retriveAuthenticatedUser());
+        aluno.setIsAtivo(true);
+        alunoRepository.save(aluno);
 
-        return modelMapper.map(aluno, AlunoDto.class);
+        Endereco endereco = AlunoRequestDTO.enderecoFromEntity(request);
+        endereco.setAluno(aluno);
+        enderecoRepository.save(endereco);
+
+        return aluno;
     }
 
-    public Page<AlunoDto> listarAlunos(String nome, String cpf, String rg, String responsavel, Pageable pageable) {
-        var spec = AlunoSpecification.isAtivo()
-                .and(AlunoSpecification.byResponsavelLegal(responsavel))
-                .and(AlunoSpecification.byRg(rg))
+    public Page<Alunos> findAll(String cpf, String cpfResponsavel, String nome, Pageable pageable){
+        var spec = Specification
+                .where(AlunoSpecification.isAtivo())
                 .and(AlunoSpecification.byCpf(cpf))
+                .and(AlunoSpecification.byCpfResponsavel(cpfResponsavel))
                 .and(AlunoSpecification.byNome(nome));
 
-        return alunoRepository.findAll(spec, pageable)
-                .map(aluno -> modelMapper.map(aluno, AlunoDto.class));
+        return alunoRepository.findAll(spec, pageable);
     }
 
-    public AlunoDto buscarAlunoPorId(Long id) {
-        Alunos aluno = alunoRepository.findById(id)
-                .orElseThrow(() -> new AlunoNaoEncontradoException(id));
-
-        return modelMapper.map(aluno, AlunoDto.class);
+    public Alunos byID(Long id){
+        return alunoRepository.findById(id).orElseThrow(() -> new NotFoundException("Aluno não encontrado"));
     }
 
-    public AlunoDto atualizarAluno(Long id, AlunoDto alunoDto) {
-        Alunos alunoExistente = alunoRepository.findById(id)
-                .orElseThrow(() -> new AlunoNaoEncontradoException(id));
+    public void changeStatusAluno(Long id){
+        Alunos byId = alunoRepository.findById(id).orElseThrow(() -> new NotFoundException("Aluno não encontrado"));
+        byId.setUpdatedAt(LocalDateTime.now());
 
-        validarCpfEouRgDuplicado(alunoDto.getCpf(), alunoDto.getRg());
-
-        modelMapper.map(alunoDto, alunoExistente);
-        alunoExistente = alunoRepository.save(alunoExistente);
-
-        return modelMapper.map(alunoExistente, AlunoDto.class);
-    }
-
-    public void deletarAluno(Long id) {
-        if (!alunoRepository.existsById(id)) {
-            throw new AlunoNaoEncontradoException(id);
+        if (!byId.getIsAtivo()){
+            byId.setIsAtivo(true);
+            alunoRepository.save(byId);
+            return;
         }
-        alunoRepository.deleteById(id);
+
+        byId.setIsAtivo(false);
+        alunoRepository.save(byId);
     }
 
-    private void validarCpfEouRgDuplicado(String cpf, String rg) {
-        if (cpf != null && alunoRepository.findByCpf(cpf) != null) {
-            throw new RuntimeException("CPF já cadastrado");
-        }
-        if (rg != null && alunoRepository.findByRg(rg) != null) {
-            throw new RuntimeException("RG já cadastrado");
-        }
+
+    public Alunos update(Long id, AlunoRequestDTO updated){
+
+        Alunos byID = alunoRepository.findById(id).orElseThrow(() -> new NotFoundException("Aluno não encontrado"));
+
+        byID.setNome(updated.nome());
+        byID.setDataNascimento(updated.dataNascimento());
+        byID.setSexo(updated.sexo());
+        byID.setCpf(updated.cpf());
+        byID.setTelefone(updated.telefone());
+        byID.setCpfResponsavel(updated.cpfResponsavel());
+        byID.setDeficiencia(updated.deficiencia());
+        byID.setObservacoes(updated.observacoes());
+        byID.setCreatedBy(byID.getCreatedBy());
+        byID.setCreatedAt(byID.getCreatedAt());
+        byID.setUpdatedBy(AuthenticationUtil.retriveAuthenticatedUser());
+        byID.setUpdatedAt(LocalDateTime.now());
+
+        Endereco endereco = enderecoRepository.findByAluno(byID);
+
+        endereco.setEstado(updated.estado());
+        endereco.setCidade(updated.cidade());
+        endereco.setBairro(updated.bairro());
+        endereco.setRua(updated.rua());
+        endereco.setNumero(updated.numero());
+        endereco.setCep(updated.cep());
+        endereco.setAluno(byID);
+
+        enderecoRepository.save(endereco);
+
+        return alunoRepository.save(byID);
     }
 }
