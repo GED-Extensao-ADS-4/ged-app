@@ -16,15 +16,13 @@ import java.util.List;
 @ToString
 @Entity(name = "tb_users")
 @Table(indexes = {
-        @Index(name = "username_idx", columnList = "username"),
         @Index(name = "email_idx", columnList = "email")
 })
 public class User extends EntityID implements UserDetails{
 
-    private String username;
+    private String email;
     private String nome;
     private String password;
-    private String email;
     private Boolean isAtivo;
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
@@ -45,13 +43,12 @@ public class User extends EntityID implements UserDetails{
 
     @Override
     public String getUsername() {
-        return username;
+        return email;
     }
 
-    public User(String nome, String email, String username, String password){
+    public User(String nome, String email, String password){
         this.nome = nome;
         this.email = email;
-        this.username = username;
         this.password = password;
     }
 }

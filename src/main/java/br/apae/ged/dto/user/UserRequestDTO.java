@@ -13,7 +13,6 @@ public record UserRequestDTO(String nome,
         return new User(
                 request.nome(),
                 request.email(),
-                request.username(),
                 new BCryptPasswordEncoder().encode(request.password())
         );
     }

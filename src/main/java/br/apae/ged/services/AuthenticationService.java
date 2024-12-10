@@ -17,7 +17,7 @@ public class AuthenticationService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        var find = repository.findByUsername(username);
+        var find = repository.findByEmail(username);
 
         if (!find.getIsAtivo()){
             throw new ActiveUserException("Seu usuário foi desativado. Por favor entre em contato com algum administrador");

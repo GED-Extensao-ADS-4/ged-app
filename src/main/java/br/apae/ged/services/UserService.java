@@ -42,7 +42,7 @@ public class UserService {
     }
 
     public UserLoginResponseDTO login(UserLoginDTO user){
-        var usernamePassword = new UsernamePasswordAuthenticationToken(user.username(), user.password());
+        var usernamePassword = new UsernamePasswordAuthenticationToken(user.email(), user.password());
         var auth = authenticationManager.authenticate(usernamePassword);
         return new UserLoginResponseDTO(tokenService.generateToken((User) auth.getPrincipal()), LocalDateTime.now().plusMinutes(120));
     }
