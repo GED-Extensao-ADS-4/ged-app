@@ -2,6 +2,7 @@ package br.apae.ged.services;
 
 import br.apae.ged.configs.TokenService;
 import br.apae.ged.dto.user.UserLoginDTO;
+import br.apae.ged.dto.user.UserLoginResponseDTO;
 import br.apae.ged.dto.user.UserRequestDTO;
 import br.apae.ged.dto.user.UserResponse;
 import br.apae.ged.exceptions.NotFoundException;
@@ -14,6 +15,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -39,10 +41,10 @@ public class UserService {
         return UserResponse.fromEntity(save);
     }
 
-    public String login(UserLoginDTO user){
+    public UserLoginResponseDTO login(UserLoginDTO user){
         var usernamePassword = new UsernamePasswordAuthenticationToken(user.username(), user.password());
         var auth = authenticationManager.authenticate(usernamePassword);
-        return tokenService.generateToken((User) auth.getPrincipal());
+        return new UserLoginResponseDTO(tokenService.generateToken((User) auth.getPrincipal()), LocalDateTime.now().plusMinutes(120));
     }
 
     public void changeStatusUser(Long id){

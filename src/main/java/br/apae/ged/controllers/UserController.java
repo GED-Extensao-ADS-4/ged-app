@@ -1,6 +1,7 @@
 package br.apae.ged.controllers;
 
 import br.apae.ged.dto.user.UserLoginDTO;
+import br.apae.ged.dto.user.UserLoginResponseDTO;
 import br.apae.ged.dto.user.UserRequestDTO;
 import br.apae.ged.dto.user.UserResponse;
 import br.apae.ged.services.UserService;
@@ -22,7 +23,7 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody UserLoginDTO entity) {
+    public ResponseEntity<UserLoginResponseDTO> login(@RequestBody UserLoginDTO entity) {
         return ResponseEntity.status(HttpStatus.CREATED).body(service.login(entity));
     }
 
