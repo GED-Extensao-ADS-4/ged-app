@@ -28,11 +28,16 @@ Clone o repositório na pasta que preferir do seu computador com o seguinte coma
 ## Após clonar
 
 - Abra o projeto na sua IDE
+- Va no arquivo application.properties dentro da pasta resources
+- Coloque um ```#``` ao lado do comando ```spring.sql.init.mode=always```
 - Abra o terminal interno da IDE e execute o seguinte comando nele:
 ```bash
   mvn clean install  
 ```
 ---
+
+- Após isso, retirar o ```#``` da linha
+- Subir a aplicação
 
 ## Swagger
 O Swagger é um pacote de dependências do Java que cria sozinho um front-end básico que documenta os endpoints e controllers que existem na aplicação
