@@ -15,10 +15,10 @@ public class AlunoSpecification {
 
     public static Specification<Alunos> byNome(String nome) {
         return (root, query, criteriaBuilder) -> {
-            if (nome == null || nome.isBlank() || nome.isEmpty()){
+            if (nome == null || nome.isBlank()) {
                 return criteriaBuilder.conjunction();
             }
-            return criteriaBuilder.like(root.get("nome"),"%" + nome + "%");
+            return criteriaBuilder.like(criteriaBuilder.lower(root.get("nome")), "%" + nome.toLowerCase() + "%");
         };
     }
 

@@ -28,7 +28,7 @@ public class DocumentSpecification {
             if (titulo == null || titulo.isBlank() || titulo.isEmpty()){
                 return criteriaBuilder.conjunction();
             }
-            return criteriaBuilder.like(root.get("titulo"), "%" + titulo + "%");
+            return criteriaBuilder.like(criteriaBuilder.lower(root.get("titulo")), "%" + titulo.toLowerCase() + "%");
         };
     }
 
@@ -46,7 +46,7 @@ public class DocumentSpecification {
             if (nome == null || nome.isBlank() || nome.isEmpty()) {
                 return criteriaBuilder.conjunction();
             }
-            return criteriaBuilder.like(root.get("aluno").get("nome"),"%" + nome + "%");
+            return criteriaBuilder.like(criteriaBuilder.lower(root.get("aluno").get("nome")),"%" + nome.toLowerCase() + "%");
         };
     }
 }
