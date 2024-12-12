@@ -1,5 +1,6 @@
 package br.apae.ged.dto.document;
 
+import br.apae.ged.dto.aluno.AlunoResponseDTO;
 import br.apae.ged.dto.user.UserResponse;
 import br.apae.ged.models.Document;
 import br.apae.ged.models.enums.TipoArquivo;
@@ -17,6 +18,7 @@ public record DocumentResponseDTO(
         LocalDateTime dataDownload,
         UserResponse downloadedBy,
         UserResponse uploadedBy,
+        AlunoResponseDTO aluno,
         Boolean isLast
 ) {
 
@@ -31,6 +33,7 @@ public record DocumentResponseDTO(
                 document.getDataDownload(),
                 UserResponse.fromEntity(document.getDownloadedBy()),
                 UserResponse.fromEntity(document.getUploadedBy()),
+                AlunoResponseDTO.fromEntity(document.getAluno()),
                 document.getIsLast()
         );
     }
